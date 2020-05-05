@@ -43,7 +43,10 @@ public class OVRGrabbable : MonoBehaviour
 	/// </summary>
 
 
-    public UnityAction onGrabBegin, onGrabEnd;
+    public UnityAction<OVRGrabber> onGrabBegin;
+
+    
+    public UnityAction onGrabEnd;
 
     public bool allowOffhandGrab
     {
@@ -124,7 +127,7 @@ public class OVRGrabbable : MonoBehaviour
         gameObject.GetComponent<Rigidbody>().isKinematic = true;
 
         if(onGrabBegin != null){
-            onGrabBegin();
+            onGrabBegin(hand);
         }
 
     }

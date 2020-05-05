@@ -11,63 +11,91 @@ public enum InventoryItems
 
 public class InventoryItem : MonoBehaviour
 {
-   
+
     public bool isEntered;
     public InventoryItems inventoryItemType;
 
-    public Transform inventoryPlaceHolderTransfrom;
+    public Transform inventoryPlaceHolderTransfrom, inLeftHandTransfrom, inRightHandTransfrom;
 
     public OVRGrabbable oVRGrabbable;
 
-    private void OnEnable() {
+    private void OnEnable()
+    {
         Debug.Log("Enabled");
 
         oVRGrabbable.onGrabBegin += OnBeginGrab;
         oVRGrabbable.onGrabEnd += OnBeginEnd;
     }
 
-    private void OnDestroy() {
+    private void OnDestroy()
+    {
         oVRGrabbable.onGrabBegin -= OnBeginGrab;
-         oVRGrabbable.onGrabEnd -= OnBeginEnd;
+        oVRGrabbable.onGrabEnd -= OnBeginEnd;
     }
 
-    public void OnBeginGrab(){
-       
+    public void OnBeginGrab(OVRGrabber oVRGrabber)
+    {
+
+        if (oVRGrabber.m_controller == OVRInput.Controller.LTouch)
+        {
+            if (inLeftHandTransfrom)
+            {
+                transform.position = inLeftHandTransfrom.position;
+                transform.rotation = inLeftHandTransfrom.rotation;
+            }
+
+        }
+        else
+        {
+            if (inRightHandTransfrom)
+            {
+                transform.position = inRightHandTransfrom.position;
+                transform.rotation = inRightHandTransfrom.rotation;
+
+            }
+        }
+
     }
 
-    public void OnBeginEnd(){
-        
+    public void OnBeginEnd()
+    {
+
     }
 
 
-    private void OnTriggerEnter(Collider other) {
-        Debug.Log(gameObject.name +" Entering  "+ other.gameObject.name);
+    private void OnTriggerEnter(Collider other)
+    {
+        Debug.Log(gameObject.name + " Entering  " + other.gameObject.name);
 
-        if(other.gameObject.tag.Equals("InventoryPlaceHolder")){
+        if (other.gameObject.tag.Equals("InventoryPlaceHolder"))
+        {
             InventoryPlaceHolder inventoryPlaceHolder = other.gameObject.GetComponent<InventoryPlaceHolder>();
-            if(inventoryPlaceHolder && inventoryPlaceHolder.inventoryItemType ==  inventoryItemType){
+            if (inventoryPlaceHolder && inventoryPlaceHolder.inventoryItemType == inventoryItemType)
+            {
                 isEntered = true;
                 inventoryPlaceHolderTransfrom = inventoryPlaceHolder.placeHolderTranform;
-                
-
                 SetPos();
             }
         }
     }
 
-    private void OnTriggerExit(Collider other) {
-        Debug.Log(gameObject.name +" Exiting  "+ other.gameObject.name);
+    private void OnTriggerExit(Collider other)
+    {
+        Debug.Log(gameObject.name + " Exiting  " + other.gameObject.name);
 
-         if(other.gameObject.tag.Equals("InventoryPlaceHolder")){
+        if (other.gameObject.tag.Equals("InventoryPlaceHolder"))
+        {
             InventoryPlaceHolder inventoryPlaceHolder = other.gameObject.GetComponent<InventoryPlaceHolder>();
-            if(inventoryPlaceHolder && inventoryPlaceHolder.inventoryItemType ==  inventoryItemType){
+            if (inventoryPlaceHolder && inventoryPlaceHolder.inventoryItemType == inventoryItemType)
+            {
                 isEntered = false;
             }
         }
     }
 
 
-    private void SetPos(){
+    private void SetPos()
+    {
 
         GetComponent<Rigidbody>().isKinematic = true;
 
